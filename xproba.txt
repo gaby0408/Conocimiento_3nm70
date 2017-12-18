@@ -1,0 +1,76 @@
+<!--  XML -->
+<?xml version="1.0" encoding="UTF-8"?>
+<xproba>
+	<ontologia nbontologia="operaciones">
+		<arbol nbarbol="ventas" frecuencia='100'>
+			<rama nbrama="tienda">
+				<valor nbvalor="xochi" frecuencia='70'>
+					<rama nbrama="producto">
+						<valor nbvalor="radio" frecuencia='50'/>
+						<valor nbvalor="tv" frecuencia='20'/>
+					</rama>
+				</valor>
+				<valor nbvalor="azca" frecuencia='30'>
+					<rama nbrama="producto">
+						<valor nbvalor="radio" frecuencia='5'/>
+						<valor nbvalor="estufa" frecuencia='25'/>
+					</rama>
+				</valor>
+			</rama>
+		</arbol>
+	</ontologia>
+</xproba>
+
+<!--  XSLT-->
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:template match="//xproba">
+	<xsl:for-each select="child::*">
+		<xsl:variable name="idontologia" select="position()" />
+		<br/>Insert into ontologia values('<xsl:value-of select="$idontologia"/>', '<xsl:value-of select="@nbontologia"/>');
+		<xsl:for-each select="child::*">
+			<xsl:variable name="idarbol" select="position()" />
+			<br/>Insert into arbol values('<xsl:value-of select="$idontologia"/>', '<xsl:value-of select="$idarbol"/>', '<xsl:value-of select="@nbarbol"/>','<xsl:value-of select="@frecuencia"/>');
+			
+			<br/>Insert into rama values('<xsl:value-of select="$idontologia"/>', '<xsl:value-of select="$idarbol"/>', '1', 'tienda');			
+			<xsl:for-each select="/descendant::arbol/rama//*[name(.)!=rama]">
+				<xsl:choose>
+					<xsl:when test="name(.)='valor'"> 
+						<xsl:variable name="idvalor" select="position()" />
+						<br/>Insert into valor values('<xsl:value-of select="$idontologia"/>', '<xsl:value-of select="$idarbol"/>', '1', '<xsl:value-of select="$idvalor"/>', '<xsl:value-of select="@nbvalor"/>', '<xsl:value-of select="@frecuencia"/>');
+					</xsl:when>
+				</xsl:choose>
+			</xsl:for-each>
+			
+			<br/>Insert into rama values('<xsl:value-of select="$idontologia"/>', '<xsl:value-of select="$idarbol"/>', '2', 'producto');			
+			<xsl:for-each select="/descendant::arbol/rama/valor//*[name(.)='valor']">
+				<xsl:choose>
+					<xsl:when test="name(.)='valor'"> 
+						<xsl:variable name="idvalor" select="position()" />
+						<br/>Insert into valor values('<xsl:value-of select="$idontologia"/>', '<xsl:value-of select="$idarbol"/>', '2', '<xsl:value-of select="$idvalor"/>', '<xsl:value-of select="@nbvalor"/>', '<xsl:value-of select="@frecuencia"/>');
+					</xsl:when>
+				</xsl:choose>
+			</xsl:for-each>
+			
+		</xsl:for-each>
+	</xsl:for-each>
+</xsl:template>
+</xsl:stylesheet>
+
+<!--
+	<xsl:for-each select="/descendant::arbol//*[name(.)='rama']">   Sirve para recorrer en cascada
+	<xsl:for-each select="/descendant::arbol//*[name(.)!=rama]">    Sirve para recorrer en sangría
+-->
+
+<!--resultados-->
+Insert into ontologia values('1', 'operaciones'); 
+Insert into arbol values('1', '1', 'ventas','100'); 
+Insert into rama values('1', '1', '1', 'tienda');	
+Insert into valor values('1', '1', '1', '1', 'xochi', '70'); 
+Insert into valor values('1', '1', '1', '2', 'azca', '30'); 
+Insert into rama values('1', '1', '2', 'producto');	
+Insert into valor values('1', '1', '2', '1', 'radio', '50'); 
+Insert into valor values('1', '1', '2', '2', 'tv', '20'); 
+Insert into valor values('1', '1', '2', '3', 'radio', '5'); 
+Insert into valor values('1', '1', '2', '4', 'estufa', '25');
+

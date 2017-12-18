@@ -1,0 +1,23 @@
+<metodos>
+	<metodo nbmetodo="M1">
+	<decision>
+		<condicion> precio<=100000</decision>
+		<verdadero>
+			<metodo nbmetodo="M2">
+				<asignacion>
+					<atributo>impuesto</atributo>
+					<operando>precio*0.02</operando>
+				</asignacion>
+			</metodo>
+		</verdadero>
+		<falso>
+			<metodo nbmetodo="M3">
+				<asignacion>
+					<atributo>impuesto</atributo>
+					<operando>precio*0.05</operando>
+				</asignacion>
+			</metodo>
+		</falso>
+	</decision>
+	</metodo>
+</metodos>

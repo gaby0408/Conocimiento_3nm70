@@ -1,0 +1,32 @@
+<!-traductor de XML a JSON->
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:template match="/">
+<xsl:apply-templates/>  
+</xsl:template>
+<xsl:template match="metodo">
+Insert into metodo values
+(<xsl:value-of select="nbmetodo"/>);<br/>
+<xsl:for-each select="*">
+<xsl:choose>
+<xsl:when test="name()='asignacion'"> 
+Insert into asignacion values 
+(<xsl:value-of select="atributo"/>,
+ <xsl:value-of select="operando"/>);<br/>
+</xsl:when>
+<xsl:when test="name()='decision'"> 
+Insert into decision values 
+(<xsl:value-of select="condicion"/>,
+<xsl:value-of select="verdadero/metodo/nbmetodo"/>, 
+<xsl:value-of select="falso/metodo/nbmetodo"/>);<br/>
+<xsl:apply-templates select="verdadero"/>
+<xsl:apply-templates select="falso"/> 
+</xsl:when>
+<xsl:otherwise></xsl:otherwise>
+</xsl:choose>
+</xsl:for-each>
+</xsl:template>
+
